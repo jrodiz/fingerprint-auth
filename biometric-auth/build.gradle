@@ -3,6 +3,12 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.jrodiz'
 version='1.0'
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
 
 android {
     compileSdkVersion 28
