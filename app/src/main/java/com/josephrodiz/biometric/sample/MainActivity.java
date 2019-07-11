@@ -6,7 +6,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.josephrodiz.biometric.BiometricCallback;
+import com.josephrodiz.biometric.BiometricDialogV23;
 import com.josephrodiz.biometric.BiometricManager;
+import com.josephrodiz.biometric.ViewSupplierV23;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,11 +28,32 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
             @Override
             public void onClick(View view) {
                 mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
-                        .setTitle(getString(R.string.biometric_title))
-                        .setSubtitle(getString(R.string.biometric_subtitle))
-                        .setDescription(getString(R.string.biometric_description))
-                        .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
+                        .setCustomView(new ViewSupplierV23() {
+                            @Override
+                            public int getCustomId() {
+                                return R.layout.activity_main;
+                            }
+
+                            @Override
+                            public void onViewInflated(final BiometricDialogV23 dialog) {
+                                dialog.findViewById(R.id.btn_authenticate).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .forceCustomView(true)
                         .build();
+
+                //Android P
+//                mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
+//                        .setTitle(getString(R.string.biometric_title))
+//                        .setSubtitle(getString(R.string.biometric_subtitle))
+//                        .setDescription(getString(R.string.biometric_description))
+//                        .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
+//                        .build();
 
                 //start authentication
                 mBiometricManager.authenticate(MainActivity.this);

@@ -7,6 +7,7 @@ import android.hardware.biometrics.BiometricPrompt;
 import android.os.Build;
 import android.os.CancellationSignal;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 public class BiometricManager extends BiometricManagerV23 {
@@ -20,29 +21,38 @@ public class BiometricManager extends BiometricManagerV23 {
         this.subtitle = biometricBuilder.subtitle;
         this.description = biometricBuilder.description;
         this.negativeButtonText = biometricBuilder.negativeButtonText;
+        this.viewSupplier = biometricBuilder.viewSupplier;
+        this.useCustomView = biometricBuilder.useCustomView;
     }
 
 
     public void authenticate(@NonNull final BiometricCallback biometricCallback) {
+        boolean isBiometricEnabled = BiometricUtils.isBiometricPromptEnabled();
 
-        if(title == null) {
+
+        if(viewSupplier != null && isBiometricEnabled && !useCustomView) {
+            biometricCallback.onBiometricAuthenticationInternalError("You should force the use of deprecated api on Android P");
+            return;
+        }
+
+        if(title == null && isBiometricEnabled && !useCustomView) {
             biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog title cannot be null");
             return;
         }
 
 
-        if(subtitle == null) {
+        if(subtitle == null && isBiometricEnabled && !useCustomView) {
             biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog subtitle cannot be null");
             return;
         }
 
 
-        if(description == null) {
+        if(description == null && isBiometricEnabled && !useCustomView) {
             biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog description cannot be null");
             return;
         }
 
-        if(negativeButtonText == null) {
+        if(negativeButtonText == null && isBiometricEnabled && !useCustomView) {
             biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog negative button text cannot be null");
             return;
         }
@@ -84,7 +94,7 @@ public class BiometricManager extends BiometricManagerV23 {
 
 
     private void displayBiometricDialog(BiometricCallback biometricCallback) {
-        if(BiometricUtils.isBiometricPromptEnabled()) {
+        if(BiometricUtils.isBiometricPromptEnabled() && !useCustomView) {
             displayBiometricPrompt(biometricCallback);
         } else {
             displayBiometricPromptV23(biometricCallback);
@@ -118,6 +128,8 @@ public class BiometricManager extends BiometricManagerV23 {
         private String subtitle;
         private String description;
         private String negativeButtonText;
+        private ViewSupplierV23 viewSupplier;
+        private boolean useCustomView;
 
         private Context context;
         public BiometricBuilder(Context context) {
@@ -142,6 +154,15 @@ public class BiometricManager extends BiometricManagerV23 {
 
         public BiometricBuilder setNegativeButtonText(@NonNull final String negativeButtonText) {
             this.negativeButtonText = negativeButtonText;
+            return this;
+        }
+
+        public BiometricBuilder setCustomView(ViewSupplierV23 viewSupplier) {
+            this.viewSupplier = viewSupplier;
+            return this;
+        }
+        public BiometricBuilder forceCustomView(boolean useCustomView) {
+            this.useCustomView = useCustomView;
             return this;
         }
 

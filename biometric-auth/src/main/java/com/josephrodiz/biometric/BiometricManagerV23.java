@@ -23,6 +23,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+import androidx.annotation.LayoutRes;
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 import androidx.core.os.CancellationSignal;
 
@@ -44,6 +45,8 @@ public class BiometricManagerV23 {
     protected String subtitle;
     protected String description;
     protected String negativeButtonText;
+    protected ViewSupplierV23 viewSupplier;
+    protected boolean useCustomView;
     private BiometricDialogV23 biometricDialogV23;
     protected CancellationSignal mCancellationSignalV23 = new CancellationSignal();
 
@@ -61,14 +64,12 @@ public class BiometricManagerV23 {
                         @Override
                         public void onAuthenticationError(int errMsgId, CharSequence errString) {
                             super.onAuthenticationError(errMsgId, errString);
-                            updateStatus(String.valueOf(errString));
                             biometricCallback.onAuthenticationError(errMsgId, errString);
                         }
 
                         @Override
                         public void onAuthenticationHelp(int helpMsgId, CharSequence helpString) {
                             super.onAuthenticationHelp(helpMsgId, helpString);
-                            updateStatus(String.valueOf(helpString));
                             biometricCallback.onAuthenticationHelp(helpMsgId, helpString);
                         }
 
@@ -83,7 +84,6 @@ public class BiometricManagerV23 {
                         @Override
                         public void onAuthenticationFailed() {
                             super.onAuthenticationFailed();
-                            updateStatus(context.getString(R.string.biometric_failed));
                             biometricCallback.onAuthenticationFailed();
                         }
                     }, null);
@@ -95,11 +95,7 @@ public class BiometricManagerV23 {
 
 
     private void displayBiometricDialog(final BiometricCallback biometricCallback) {
-        biometricDialogV23 = new BiometricDialogV23(context, biometricCallback);
-        biometricDialogV23.setTitle(title);
-        biometricDialogV23.setSubtitle(subtitle);
-        biometricDialogV23.setDescription(description);
-        biometricDialogV23.setButtonText(negativeButtonText);
+        biometricDialogV23 = new BiometricDialogV23(context, biometricCallback, viewSupplier);
         biometricDialogV23.show();
     }
 
@@ -108,12 +104,6 @@ public class BiometricManagerV23 {
     private void dismissDialog() {
         if(biometricDialogV23 != null) {
             biometricDialogV23.dismiss();
-        }
-    }
-
-    private void updateStatus(String status) {
-        if(biometricDialogV23 != null) {
-            biometricDialogV23.updateStatus(status);
         }
     }
 
