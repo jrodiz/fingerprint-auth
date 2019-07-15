@@ -1,6 +1,7 @@
 package com.josephrodiz.biometric;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
@@ -26,6 +27,7 @@ import javax.crypto.SecretKey;
 import androidx.annotation.LayoutRes;
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 import androidx.core.os.CancellationSignal;
+import androidx.fragment.app.FragmentActivity;
 
 
 @TargetApi(Build.VERSION_CODES.M)
@@ -39,7 +41,7 @@ public class BiometricManagerV23 {
     private FingerprintManagerCompat.CryptoObject cryptoObject;
 
 
-    protected Context context;
+    protected FragmentActivity context;
 
     protected String title;
     protected String subtitle;
@@ -95,8 +97,8 @@ public class BiometricManagerV23 {
 
 
     private void displayBiometricDialog(final BiometricCallback biometricCallback) {
-        biometricDialogV23 = new BiometricDialogV23(context, biometricCallback, viewSupplier);
-        biometricDialogV23.show();
+        biometricDialogV23 = new BiometricDialogV23(biometricCallback, viewSupplier);
+        biometricDialogV23.show(context.getSupportFragmentManager(), getClass().getSimpleName());
     }
 
 

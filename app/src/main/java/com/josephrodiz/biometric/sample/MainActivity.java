@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
                             @Override
                             public void onViewInflated(final BiometricDialogV23 dialog) {
-                                dialog.findViewById(R.id.btn_authenticate).setOnClickListener(new View.OnClickListener() {
+                                dialog.customView.findViewById(R.id.btn_authenticate).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         dialog.dismiss();

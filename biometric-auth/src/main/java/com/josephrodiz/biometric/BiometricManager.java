@@ -1,6 +1,7 @@
 package com.josephrodiz.biometric;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.biometrics.BiometricPrompt;
@@ -9,6 +10,7 @@ import android.os.CancellationSignal;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
 public class BiometricManager extends BiometricManagerV23 {
 
@@ -131,8 +133,8 @@ public class BiometricManager extends BiometricManagerV23 {
         private ViewSupplierV23 viewSupplier;
         private boolean useCustomView;
 
-        private Context context;
-        public BiometricBuilder(Context context) {
+        private FragmentActivity context;
+        public BiometricBuilder(FragmentActivity context) {
             this.context = context;
         }
 
